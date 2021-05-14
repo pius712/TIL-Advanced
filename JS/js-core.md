@@ -250,6 +250,9 @@ this는 객체 자신을 가리키고, 함수도 자바스크립트에서는 객
 그리고 **this는 함수 자신의 렉시컬 스코프를 가리키는 것도 아니다.**
 
 아래의 코드는 foo 함수의 lexical scope을 가리켜서 호출되는 것이 아니라, 그저 this가 global객체를 가리키기 때문에 성공한 것이다.
+
+그리고 애초에 `this.bar()` 형태로 함수를 호출하는 것 자체가 불필요한 작업이다. 
+
 ```javascript
 function foo(){
     var a = 2;
@@ -257,8 +260,11 @@ function foo(){
 }
 
 function bar(){
-    console.log('hi');
+    console.log(this.a);
 }
+
+foo();
+>>> undefined
 ```
 
 
