@@ -1,357 +1,6 @@
-# 리액트 훅스
+# useRef
 
 # hooks
-
-## useRef
-
-DOM을 처리하고 싶을 때 일반적을 사용하지만, 그 외에도
-stater가 아닌 데이터를 처리하고 싶을 때도 사용할 수 있다.
-
-아래와 같이 timer의 id를 사용할 수도 있다.
-state로 관리하는 경우에는 이로 인해서 컴포넌트가 계속 렌더링 되기 때문에 적합하지 않다.
-
-```jsexpordefaul functionAp () {
-  constimerIdReuseRe(-1);
- useEffect(()=>{
-    timerIdRef.current = setTimeout(()=> {}, 1000);
-  })
-
-  useEffect(()=>{
-    if(timerIdRef.current >= 0){
-      clearTimeout(timerIdRef.current);
-    }
-  })
-}
-```
-
-이전 상태 값을 기억하고 싶을 때, 사용할 수도 있다. 아래의 코드는 컴포넌트가 처음 렌더링될 때,
-prevAgeRef.current에 age 값을 넣고, 이를 prevAge라는 변수에 넣는다.
-
-이후에 age가 변경 변경이 되면, 컴포넌트가 ??
-
-useEffect는 DOM이 그려지고 나서 호출이 된다.
-그렇기 때문에, 아래의 useEffect가 실행되더라도,
-`const prevAge = prevAgeRef.current`는 이전 값을 가지게 된다.
-그리고 화면은 prevAge가 그려지는데, prevAge는 state로 선언하지 않았기 때문에, 리렌더링이 되지 않는다.
-
-```js
-export default function App(){
-  const[age,setAge]=useState(20);
-  constprevAgeRef=useRef(20);
-  useEffect(()=>{
-    prevAgeRef.current = age;
-  },[age]);
-  constprevAge=prevAgeRef.current;
-  consttext=age===prevAge?'same':age>prevAge?'order':'younger';
-
-  return (
-    <div>
-      <p>{`age ${age} is ${text} than age ${prevAge}`}</p>
-      <button
-        onClick={()=>{
-          constage=Math.floor(Math.random()50+1);
-          setAge(age);
-        }}>
-      나이변경
-      </button>
-    </div>
-  )
-}
-
-```
-
-
-## useMemo
-
-`useMemo(callback, array)` 와 같이 사용된다. callback 함수는 계산량이 복잡한 경우에 사용된다.
-
-
-```js
-constvalue=useMemo(()=>rnExpensiveJob(v1,v2),[v1,v2]);
-```
-
-아래와 같이 useMemo를 사용하면, setV3를 호출하는 버튼을 누르더라도 의존하는 값이 변하지 않았기 때문에,
-v1, v2를 계산한 value를 그대로 가지고 있는다.
-만약 v1, v2이 바뀐다면, 함수가 실행되어서 바뀌게 된다.
-
-```js
-export default function App() {
-  const[v1,setV1]=useState(0);
-  const[v2,setV2]=useState(0);
-  const[v3,setV3]=useState(0);
-  constvalue=useMemo(()=>runExpensiveJob(v1,v2),[v1,v2]);
-  
-  return (
-    <>
-      <p>{`value is ${value}`}</p>
-      <button onClick={()=>{
-        setV1(Math.random());
-        setV2(Math.random());
-      }}>
-       v1/v2 수정
-      </button>
-      <p>{`v3 is ${v3}`}</p>
-      <button onClick={()=>{
-        setV3(Math.random())
-      }}>
-        v3 수정
-      </button>
-    </>
-  )
-}
-function runExpensiveJob(v1, v2){
-  console.log('called');
-  return v1 + v2;
-}
-```
-
-
-## useCallback
-
-함수 메모이제이션을 위한 훅
-
-아래와 같이 `onSave = {() => fetchData(name, age)}` 의 경우에는
-계속 새로운 함수가 만들어 진다. 따라서 v1 값을 수정하게 되더라도 컴포넌트가 리렌더링 되면서,
-해당 함수가 만들어지는데, User 컴포넌트는 리렌더링 될 필요가 없음에도 불구하고 props로 들어오는
-onSave 때문에 리렌더링이 되버린다.
-
-```js
-export default function App() {
-
-  const[name,setName]=useState('');
-  const[age,setAge]=useState(0);
-  const[v1,setV1]=useState(0);
-  return (
-    <div>
-      <User
-        onSave = {()=> fetchData(name, age)}
-      />
-      <button onClick={()=> setV1(Math.random())}>v1 수정</button>
-    </div>
-  )
-}
-
-constUser=React.memo(function({onSave,setName,setAge}){
-console.log('User render');
-return null;
-
-})
-function fetchData(name, age){
-
-};
-``` 
-
-
-하지만 아래와 같이 useCallback을 사용하여 onSave에 함수를 넣어준다면, User 컴포넌트는 리렌더링 되지 않는다.
-(물론, React.memo를 사용하지 않는다면 리렌더링된다.)
-```js
-export default function App() {
-  const[name,setName]=useState("");
-  const[age,setAge]=useState(0);
-  const[v1,setV1]=useState(0);
-  constfetchData=useCallback(()=>{
-console.log("fetchData");
-},[name,age]);
-  return (
-    <div>
-      <User onSave={fetchData} />
-      <button onClick={() => setV1(Math.random())}>v1 수정</button>
-    </div>
-  );
-}
-
-constUser=React.memo(function({onSave,setName,setAge}){
-console.log("User render");
-return null;
-});
-```
-
-
-## useReducer
-
-여러 개의 상태 값을 관리할때는 useReducer를 사용한다.
-
-
-```js
-const[state,dispatch]=useReducer(reducer,initialValue)
-
-
-constINITIAL_STATE={name:'pius',age:28};
-function reducer(state, action){
-  switch(action.type) {
-    case 'setTodo' : 
-      return { ...state, name: 'simon'};
-    case 'setDuration' : 
-      return { ...state, age: 29};
-    default: 
-      return state;
-  }
-}
-```
-
-useReducer와 context api 가 합쳐지면 상태의 깊이를 줄여줄 수 있다.
-
-```js
-
-import React, { useReducer } from 'react';
-
-exportconstProfileDispatch=React.createContext(null);
-
-export default function App() {
-  const[state,dispatch]=useReducer(reducer,INITIAL_STATE);
-
-  return (
-    <div>
-      <ProfileDispatch.Provider>
-        <Profile/>
-      </ProfileDispatch.Provider>
-    </div>
-  )
-}
-
-constINITIAL_STATE={name:'empty',age:0};
-function reducer(state, action){
-  switch(action){
-    case 'setName' :
-      return {...state, name: action.name};
-    case 'setAge' :
-      return {...state, age: action.age};
-    default:
-      return state;
-  }
-}
-```
-
-
-## useImperativeHandle
-
-`useImperativeHandle(ref, ()=> return { func1 , func2 } )`
-
-
-클래스형 컴포넌트의 경우 부모 컴포넌트의 ref 객체를 통해서 자식 컴포넌트 메서드를 호출 할 수 있다.
-물론, 지양해야하는 패턴이지만 `useImperativeHandle`도 이와 같은 방식을 사용할 수 있다.
-
-
-```js
-
-//parent
-
-function App(){
-  constprofileRef=useRef();
-  constonClick=()=>{
-profileRef.current.getNameLength();
-profileRef.current.addAge(10);
-}
-  return (
-    <div>
-      <Profile ref={profileRef}/>
-      {/
-
-/}
-    </div>
-  )
-}
-
-//child
-function Profile(_, ref){
-  const[name,setName]=useState('pius');
-  const[age,setAge]=useState(0);
-  
-  useImperativeHandle(ref, ()=> ({
-    addAge: value => setAge(age + value),
-    getNameLenght: () => name.length,
-  }))
-
-  return (
-    <div>
-      {/
-...
-/}
-    </div>
-  )
-}
-
-export default forwardRef(Profile);
-```
-
-## useLayoutEffect
-
-useEffect의 경우 DOM에 렌더링 결과가 반환된 이후에  비동기 호출된다.
-
-useLayoutEffect 는 함수를 동기로 호출하게 된다.
-특별한 이유가 없다면 쓰지 않는 것이 성능에 좋다. 만약 이 훅 내부에서 복잡한 연산을 한다면,
-화면이 그려지지 않는다.
-
-
-useEffect를 사용한다면, 500이상 버튼을 누르면 렌더링이 되었다가 useEffect가 실행되어
-width를 500으로 만들어주고 다시 렌더링 되기때문에, 화면에 width가 500 이상인 화면이 잠시 나타났다가 사라진다.
-
-```js
-export default function App(){
-  const[width,setWidth]=useState(200);
-  useEffect(()=>{
-    if(width > 500){
-      setWidth(500);
-    }
-  },[width])
-
-  return (
-    <div>
-      <div style={{width, height: 100, backgroundColor:  'green'}}>test<div>
-      <button 
-      onClick={()=>{
-        constvalue=Math.floor(Math.random()499+1);
-        setWidth(value);
-      }}>
-      500이하</button>
-      <button
-        onClick={()=>{
-        constvalue=Math.floor(Math.random()500+501);
-        setWidth(value);
-      }}
-      >500이상</button>
-    </div>
-  )
-}
-```
-
-아래의  useEffect 대신에 useLayoutEffect를 사용한다면,
-렌더링 -> DOM에 반영을 하고나서 브라우저에 화면을 그리기 전에 useLayoutEffect를 실행한다.
-그래서 값을 변경하고 다시 렌더링 -> DOM반영 -> 브라우저에 화면을 그리게 된다.
-그렇기 때문에 useEffect를 사용하는 것과는 달리 화면에 500이상의 그림이 깜빡거리며 사라지는 현상이 없어지게된다.
-```js
-export default function App(){
-  const[width,setWidth]=useState(200);
-  useLayoutEffect(()=>{
-    if(width > 500){
-      setWidth(500);
-    }
-  },[width])
-
-  return (
-    <div>
-      <div style={{width, height: 100, backgroundColor:  'green'}}>test<div>
-      <button 
-      onClick={()=>{
-        constvalue=Math.floor(Math.random()499+1);
-        setWidth(value);
-      }}>
-      500이하</button>
-      <button
-        onClick={()=>{
-        constvalue=Math.floor(Math.random()500+501);
-        setWidth(value);
-      }}
-      >500이상</button>
-    </div>
-  )
-}
-```
-
-
-
-
-
 
 
 ## useRef( ...[value])
@@ -364,14 +13,14 @@ ref를 통해서 DOM에 접근할 수 있다.
 
 
 ```js
-constinputRef=useRef();
+const*inputRef*=*useRef*();
 
-useEffect(()=> {
-  inputRef.current.focus();
+*useEffect*(()=> {
+  *inputRef.current.focus*();
 },[])
-return (
+*return* (
   <div>
-    <input ref={inputRef}>
+    <input *ref*={inputRef}>
   </div>
 )
 ```
@@ -383,19 +32,19 @@ ref는 html element에 붙일 수 있고,
 `forwardRef`
 ```js
 
-export default function App() {
+*export* *default* function *App*() {
 
-  return(
+  *return*(
 
     <div>
-      <Button ref={buttonRef}/>
+      <Button *ref*={buttonRef}/>
     </div>
   )
 }
 
-constButton=React.forwardRe(function({onClick}), ref){
-return(
-<button onClick={onClick} ref={ref}>
+const*Button*=*React.forwardRe*(function({*onClick*})*, ref)*{
+*return*(
+<button *onClick*={onClick} *ref*={ref}>
       save
     </button>
 )
@@ -412,21 +61,21 @@ ref 내부의 함수가 실행되면서 setText(INITIAL_TEXT)가 실행이 된�
 
 
 ```js
-export default function App() {
-  const[text,setText]=useState();
-  const[showText,setShowText]=useState();
+*export* *default* function *App*() {
+  const[*text*,*setText*]=*useState*();
+  const[*showText*,*setShowText*]=*useState*();
   
-  return (
+  *return* (
     <div> 
       {showText && (
         <input 
-          type="text"
-          ref={ref=> ref && setText(INITIAL_TEXT)}
-          value={text}
-          onChange={e=> setText(e.target.value)}
+          *type*="text"
+          *ref*={ref=> ref && *setText*(INITIAL_TEXT)}
+          *value*={text}
+          *onChange*={e=> *setText*(*e.target.*value)}
           />
       )}
-      <button onClick= {() => setShowText(!showText)}>보이기/가리기</button>
+      <button *onClick*= {() => *setShowText*(!showText)}>보이기/가리기</button>
   )
 }
 ```
@@ -435,22 +84,22 @@ export default function App() {
 
 
 ```js
-export default function App() {
-  const[text,setText]=useState();
-  const[showText,setShowText]=useState();
+*export* *default* function *App*() {
+  const[*text*,*setText*]=*useState*();
+  const[*showText*,*setShowText*]=*useState*();
   
-  constsetInitialText=useCallback(ref=>ref&&setText(INTIAL_TEXT),[]);
-  return (
+  const*setInitialText*=*useCallback*(*ref*=>ref&&*setText*(*INTIAL_TEXT*),[]);
+  *return* (
     <div> 
       {showText && (
         <input 
-          type="text"
-          ref={setInitialText}
-          value={text}
-          onChange={e=> setText(e.target.value)}
+          *type*="text"
+          *ref*={setInitialText}
+          *value*={text}
+          *onChange*={e=> *setText*(*e.target.*value)}
           />
       )}
-      <button onClick= {() => setShowText(!showText)}>보이기/가리기</button>
+      <button *onClick*= {() => *setShowText*(!showText)}>보이기/가리기</button>
   )
 }
 ```
@@ -461,41 +110,41 @@ hook의 경우에는 반복문, 제어문에서 실행될 수 없기 때문에, 
 그렇기 때문에, ref
 
 ```js
-export default function Component({list}) {
+*export* *default* function *Component*({list}) {
 
-  constlistRef=useRef({});
+  const*listRef*=*useRef*({});
 
-  function onClick() {
+  function *onClick*() {
     letmaxRight=0;
     letmaxId='';
     
-    for (constitemof list){
-      constref=list.current[item.id];
+    *for* (const*item*of list){
+      const*ref*=*list.current*[*item.id*];
       if(ref){
-        constrect=ref.getBoundingClientRect();
-        if(maxRight < rect.right){
-          maxRight = rect.right;
+        const*rect*=*ref.getBoundingClientRect*();
+        if(maxRight < *rect.*right){
+          maxRight = *rect.*right;
           maxId = box,id;
         }
       }
     }
-    alert(`제일 끝 요소는 ${maxId}`)
+    *alert*(`제일 끝 요소는 ${maxId}`)
   }
-  constsetInitialText=useCallback(ref=>ref&&setText(INTIAL_TEXT),[]);
-  return (
+  const*setInitialText*=*useCallback*(*ref*=>ref&&*setText*(*INTIAL_TEXT*),[]);
+  *return* (
     
     <>
       <div>
         {
-          list.map(item => (
+          *list.map*(item => (
             <div
-              ref = {ref=> list.current[item.id] = ref}>
+              *ref* = {ref=> *list.*current[*item.*id] = ref}>
               {item}
             </div>
           ))
         }
       <div>
-      <button onClick={onClick}>
+      <button *onClick*={onClick}>
     </>
   )
 }
@@ -512,10 +161,4 @@ export default function Component({list}) {
 ## use
 
 #React/hooks/useRef
-
-
-
-
-
-#React/hooks/hook
 
