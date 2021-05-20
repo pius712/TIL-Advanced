@@ -10,16 +10,15 @@ stater가 아닌 데이터를 처리하고 싶을 때도 사용할 수 있다.
 아래와 같이 timer의 id를 사용할 수도 있다.
 state로 관리하는 경우에는 이로 인해서 컴포넌트가 계속 렌더링 되기 때문에 적합하지 않다.
 
-```js
-*export* *default* function *App* () {
-  const*timerIdRef*=*useRef*(-1);
-  *useEffect*(()=>{
-    *timerIdRef.*current = setTimeout(()=> {}, 1000);
+```jsexpordefaul functionAp () {
+  constimerIdReuseRe(-1);
+ useEffect(()=>{
+    timerIdRef.current = setTimeout(()=> {}, 1000);
   })
 
-  *useEffect*(()=>{
-    if(*timerIdRef.*current >= 0){
-      clearTimeout(*timerIdRef.*current);
+  useEffect(()=>{
+    if(timerIdRef.current >= 0){
+      clearTimeout(timerIdRef.current);
     }
   })
 }
@@ -36,22 +35,22 @@ useEffect는 DOM이 그려지고 나서 호출이 된다.
 그리고 화면은 prevAge가 그려지는데, prevAge는 state로 선언하지 않았기 때문에, 리렌더링이 되지 않는다.
 
 ```js
-*export* *default* function *App*(){
-  const[*age*,*setAge*]=*useState*(20);
-  const*prevAgeRef*=*useRef*(20);
-  *useEffect*(()=>{
-    *prevAgeRef.*current = age;
+export default function App(){
+  const[age,setAge]=useState(20);
+  constprevAgeRef=useRef(20);
+  useEffect(()=>{
+    prevAgeRef.current = age;
   },[age]);
-  const*prevAge*=*prevAgeRef.current*;
-  const*text*=age===prevAge?'same':age>prevAge?'order':'younger';
+  constprevAge=prevAgeRef.current;
+  consttext=age===prevAge?'same':age>prevAge?'order':'younger';
 
-  *return* (
+  return (
     <div>
       <p>{`age ${age} is ${text} than age ${prevAge}`}</p>
       <button
-        *onClick*={()=>{
-          const*age*=*Math.floor*(*Math.random*()*50+1);
-          *setAge*(age);
+        onClick={()=>{
+          constage=Math.floor(Math.random()50+1);
+          setAge(age);
         }}>
       나이변경
       </button>
@@ -68,7 +67,7 @@ useEffect는 DOM이 그려지고 나서 호출이 된다.
 
 
 ```js
-const*value*=*useMemo*(()=>*rnExpensiveJob*(v1,v2),[v1,v2]);
+constvalue=useMemo(()=>rnExpensiveJob(v1,v2),[v1,v2]);
 ```
 
 아래와 같이 useMemo를 사용하면, setV3를 호출하는 버튼을 누르더라도 의존하는 값이 변하지 않았기 때문에,
@@ -76,33 +75,33 @@ v1, v2를 계산한 value를 그대로 가지고 있는다.
 만약 v1, v2이 바뀐다면, 함수가 실행되어서 바뀌게 된다.
 
 ```js
-*export* *default* function *App*() {
-  const[*v1*,*setV1*]=*useState*(0);
-  const[*v2*,*setV2*]=*useState*(0);
-  const[*v3*,*setV3*]=*useState*(0);
-  const*value*=*useMemo*(()=>*runExpensiveJob*(v1,v2),[v1,v2]);
+export default function App() {
+  const[v1,setV1]=useState(0);
+  const[v2,setV2]=useState(0);
+  const[v3,setV3]=useState(0);
+  constvalue=useMemo(()=>runExpensiveJob(v1,v2),[v1,v2]);
   
-  *return* (
+  return (
     <>
       <p>{`value is ${value}`}</p>
-      <button *onClick*={()=>{
-        *setV1*(Math*.*random());
-        *setV2*(Math*.*random());
+      <button onClick={()=>{
+        setV1(Math.random());
+        setV2(Math.random());
       }}>
        v1/v2 수정
       </button>
       <p>{`v3 is ${v3}`}</p>
-      <button *onClick*={()=>{
-        *setV3*(Math*.*random())
+      <button onClick={()=>{
+        setV3(Math.random())
       }}>
         v3 수정
       </button>
     </>
   )
 }
-function *runExpensiveJob*(v1, v2){
-  *console.log*('called');
-  *return* v1 + v2;
+function runExpensiveJob(v1, v2){
+  console.log('called');
+  return v1 + v2;
 }
 ```
 
@@ -117,27 +116,27 @@ function *runExpensiveJob*(v1, v2){
 onSave 때문에 리렌더링이 되버린다.
 
 ```js
-*export* *default* function *App*() {
+export default function App() {
 
-  const[*name*,*setName*]=*useState*('');
-  const[*age*,*setAge*]=*useState*(0);
-  const[*v1*,*setV1*]=*useState*(0);
-  *return* (
+  const[name,setName]=useState('');
+  const[age,setAge]=useState(0);
+  const[v1,setV1]=useState(0);
+  return (
     <div>
       <User
-        *onSave* = {()=> *fetchData*(name, age)}
+        onSave = {()=> fetchData(name, age)}
       />
-      <button *onClick*={()=> *setV1*(Math*.*random())}>v1 수정</button>
+      <button onClick={()=> setV1(Math.random())}>v1 수정</button>
     </div>
   )
 }
 
-const*User*=*React.memo*(function({*onSave*,*setName*,*setAge*}){
-*console.log*('User render');
-*return null*;
+constUser=React.memo(function({onSave,setName,setAge}){
+console.log('User render');
+return null;
 
 })
-function *fetchData*(name, age){
+function fetchData(name, age){
 
 };
 ``` 
@@ -146,24 +145,24 @@ function *fetchData*(name, age){
 하지만 아래와 같이 useCallback을 사용하여 onSave에 함수를 넣어준다면, User 컴포넌트는 리렌더링 되지 않는다.
 (물론, React.memo를 사용하지 않는다면 리렌더링된다.)
 ```js
-*export* *default* function *App*() {
-  const[*name*,*setName*]=*useState*("");
-  const[*age*,*setAge*]=*useState*(0);
-  const[*v1*,*setV1*]=*useState*(0);
-  const*fetchData*=*useCallback*(()=>{
-*console.log*("fetchData");
+export default function App() {
+  const[name,setName]=useState("");
+  const[age,setAge]=useState(0);
+  const[v1,setV1]=useState(0);
+  constfetchData=useCallback(()=>{
+console.log("fetchData");
 },[name,age]);
-  *return* (
+  return (
     <div>
-      <User *onSave*={fetchData} />
-      <button *onClick*={() => *setV1*(Math*.*random())}>v1 수정</button>
+      <User onSave={fetchData} />
+      <button onClick={() => setV1(Math.random())}>v1 수정</button>
     </div>
   );
 }
 
-const*User*=*React.memo*(function({*onSave*,*setName*,*setAge*}){
-*console.log*("User render");
-*return null*;
+constUser=React.memo(function({onSave,setName,setAge}){
+console.log("User render");
+return null;
 });
 ```
 
@@ -174,18 +173,18 @@ const*User*=*React.memo*(function({*onSave*,*setName*,*setAge*}){
 
 
 ```js
-const[*state*,*dispatch*]=*useReducer*(reducer,initialValue)
+const[state,dispatch]=useReducer(reducer,initialValue)
 
 
-const*INITIAL_STATE*={*name*:'pius',*age*:28};
-function *reducer*(state, action){
-  switch(*action.*type) {
+constINITIAL_STATE={name:'pius',age:28};
+function reducer(state, action){
+  switch(action.type) {
     case 'setTodo' : 
-      *return* { ...state, name: 'simon'};
+      return { ...state, name: 'simon'};
     case 'setDuration' : 
-      *return* { ...state, age: 29};
+      return { ...state, age: 29};
     default: 
-      *return* state;
+      return state;
   }
 }
 ```
@@ -194,14 +193,14 @@ useReducer와 context api 가 합쳐지면 상태의 깊이를 줄여줄 수 있
 
 ```js
 
-*import* React, { useReducer } *from* 'react';
+import React, { useReducer } from 'react';
 
-*export*const*ProfileDispatch*=*React.createContext*(*null*);
+exportconstProfileDispatch=React.createContext(null);
 
-*export* *default* function *App*() {
-  const[*state*,*dispatch*]=*useReducer*(reducer,*INITIAL_STATE*);
+export default function App() {
+  const[state,dispatch]=useReducer(reducer,INITIAL_STATE);
 
-  *return* (
+  return (
     <div>
       <ProfileDispatch.Provider>
         <Profile/>
@@ -210,15 +209,15 @@ useReducer와 context api 가 합쳐지면 상태의 깊이를 줄여줄 수 있
   )
 }
 
-const*INITIAL_STATE*={*name*:'empty',*age*:0};
-function *reducer*(state, action){
+constINITIAL_STATE={name:'empty',age:0};
+function reducer(state, action){
   switch(action){
     case 'setName' :
-      *return* {...state, name: *action.*name};
+      return {...state, name: action.name};
     case 'setAge' :
-      *return* {...state, age: *action.*age};
+      return {...state, age: action.age};
     default:
-      *return* state;
+      return state;
   }
 }
 ```
@@ -235,44 +234,44 @@ function *reducer*(state, action){
 
 ```js
 
-//*parent*
+//parent
 
-function *App*(){
-  const*profileRef*=*useRef*();
-  const*onClick*=()=>{
-*profileRef.current.getNameLength*();
-*profileRef.current.addAge*(10);
+function App(){
+  constprofileRef=useRef();
+  constonClick=()=>{
+profileRef.current.getNameLength();
+profileRef.current.addAge(10);
 }
-  *return* (
+  return (
     <div>
-      <Profile *ref*={profileRef}/>
-      {/*
+      <Profile ref={profileRef}/>
+      {/
 
-*/}
+/}
     </div>
   )
 }
 
-//*child*
-function *Profile*(_, ref){
-  const[*name*,*setName*]=*useState*('pius');
-  const[*age*,*setAge*]=*useState*(0);
+//child
+function Profile(_, ref){
+  const[name,setName]=useState('pius');
+  const[age,setAge]=useState(0);
   
-  *useImperativeHandle*(ref, ()=> ({
-    *addAge*: value => *setAge*(age + value),
-    *getNameLenght*: () => *name.*length,
+  useImperativeHandle(ref, ()=> ({
+    addAge: value => setAge(age + value),
+    getNameLenght: () => name.length,
   }))
 
-  *return* (
+  return (
     <div>
-      {/*
-*...*
-*/}
+      {/
+...
+/}
     </div>
   )
 }
 
-*export* *default* *forwardRef*(Profile)
+export default forwardRef(Profile);
 ```
 
 ## useLayoutEffect
@@ -288,27 +287,27 @@ useEffect를 사용한다면, 500이상 버튼을 누르면 렌더링이 되었�
 width를 500으로 만들어주고 다시 렌더링 되기때문에, 화면에 width가 500 이상인 화면이 잠시 나타났다가 사라진다.
 
 ```js
-*export* *default* function *App*(){
-  const[*width*,*setWidth*]=*useState*(200);
-  *useEffect*(()=>{
+export default function App(){
+  const[width,setWidth]=useState(200);
+  useEffect(()=>{
     if(width > 500){
-      *setWidth*(500);
+      setWidth(500);
     }
   },[width])
 
-  *return* (
+  return (
     <div>
-      <div *style*={{width, height: 100, backgroundColor:  'green'}}>test<div>
+      <div style={{width, height: 100, backgroundColor:  'green'}}>test<div>
       <button 
-      *onClick*={()=>{
-        const*value*=*Math.floor*(*Math.random*()*499+1);
-        *setWidth*(value);
+      onClick={()=>{
+        constvalue=Math.floor(Math.random()499+1);
+        setWidth(value);
       }}>
       500이하</button>
       <button
-        *onClick*={()=>{
-        const*value*=*Math.floor*(*Math.random*()*500+501);
-        *setWidth*(value);
+        onClick={()=>{
+        constvalue=Math.floor(Math.random()500+501);
+        setWidth(value);
       }}
       >500이상</button>
     </div>
@@ -321,27 +320,27 @@ width를 500으로 만들어주고 다시 렌더링 되기때문에, 화면에 w
 그래서 값을 변경하고 다시 렌더링 -> DOM반영 -> 브라우저에 화면을 그리게 된다.
 그렇기 때문에 useEffect를 사용하는 것과는 달리 화면에 500이상의 그림이 깜빡거리며 사라지는 현상이 없어지게된다.
 ```js
-*export* *default* function *App*(){
-  const[*width*,*setWidth*]=*useState*(200);
-  *useLayoutEffect*(()=>{
+export default function App(){
+  const[width,setWidth]=useState(200);
+  useLayoutEffect(()=>{
     if(width > 500){
-      *setWidth*(500);
+      setWidth(500);
     }
   },[width])
 
-  *return* (
+  return (
     <div>
-      <div *style*={{width, height: 100, backgroundColor:  'green'}}>test<div>
+      <div style={{width, height: 100, backgroundColor:  'green'}}>test<div>
       <button 
-      *onClick*={()=>{
-        const*value*=*Math.floor*(*Math.random*()*499+1);
-        *setWidth*(value);
+      onClick={()=>{
+        constvalue=Math.floor(Math.random()499+1);
+        setWidth(value);
       }}>
       500이하</button>
       <button
-        *onClick*={()=>{
-        const*value*=*Math.floor*(*Math.random*()*500+501);
-        *setWidth*(value);
+        onClick={()=>{
+        constvalue=Math.floor(Math.random()500+501);
+        setWidth(value);
       }}
       >500이상</button>
     </div>
@@ -365,14 +364,14 @@ ref를 통해서 DOM에 접근할 수 있다.
 
 
 ```js
-const*inputRef*=*useRef*();
+constinputRef=useRef();
 
-*useEffect*(()=> {
-  *inputRef.current.focus*();
+useEffect(()=> {
+  inputRef.current.focus();
 },[])
-*return* (
+return (
   <div>
-    <input *ref*={inputRef}>
+    <input ref={inputRef}>
   </div>
 )
 ```
@@ -384,19 +383,19 @@ ref는 html element에 붙일 수 있고,
 `forwardRef`
 ```js
 
-*export* *default* function *App*() {
+export default function App() {
 
-  *return*(
+  return(
 
     <div>
-      <Button *ref*={buttonRef}/>
+      <Button ref={buttonRef}/>
     </div>
   )
 }
 
-const*Button*=*React.forwardRe*(function({*onClick*})*, ref)*{
-*return*(
-<button *onClick*={onClick} *ref*={ref}>
+constButton=React.forwardRe(function({onClick}), ref){
+return(
+<button onClick={onClick} ref={ref}>
       save
     </button>
 )
@@ -413,21 +412,21 @@ ref 내부의 함수가 실행되면서 setText(INITIAL_TEXT)가 실행이 된�
 
 
 ```js
-*export* *default* function *App*() {
-  const[*text*,*setText*]=*useState*();
-  const[*showText*,*setShowText*]=*useState*();
+export default function App() {
+  const[text,setText]=useState();
+  const[showText,setShowText]=useState();
   
-  *return* (
+  return (
     <div> 
       {showText && (
         <input 
-          *type*="text"
-          *ref*={ref=> ref && *setText*(INITIAL_TEXT)}
-          *value*={text}
-          *onChange*={e=> *setText*(*e.target.*value)}
+          type="text"
+          ref={ref=> ref && setText(INITIAL_TEXT)}
+          value={text}
+          onChange={e=> setText(e.target.value)}
           />
       )}
-      <button *onClick*= {() => *setShowText*(!showText)}>보이기/가리기</button>
+      <button onClick= {() => setShowText(!showText)}>보이기/가리기</button>
   )
 }
 ```
@@ -436,22 +435,22 @@ ref 내부의 함수가 실행되면서 setText(INITIAL_TEXT)가 실행이 된�
 
 
 ```js
-*export* *default* function *App*() {
-  const[*text*,*setText*]=*useState*();
-  const[*showText*,*setShowText*]=*useState*();
+export default function App() {
+  const[text,setText]=useState();
+  const[showText,setShowText]=useState();
   
-  const*setInitialText*=*useCallback*(*ref*=>ref&&*setText*(*INTIAL_TEXT*),[]);
-  *return* (
+  constsetInitialText=useCallback(ref=>ref&&setText(INTIAL_TEXT),[]);
+  return (
     <div> 
       {showText && (
         <input 
-          *type*="text"
-          *ref*={setInitialText}
-          *value*={text}
-          *onChange*={e=> *setText*(*e.target.*value)}
+          type="text"
+          ref={setInitialText}
+          value={text}
+          onChange={e=> setText(e.target.value)}
           />
       )}
-      <button *onClick*= {() => *setShowText*(!showText)}>보이기/가리기</button>
+      <button onClick= {() => setShowText(!showText)}>보이기/가리기</button>
   )
 }
 ```
@@ -462,41 +461,41 @@ hook의 경우에는 반복문, 제어문에서 실행될 수 없기 때문에, 
 그렇기 때문에, ref
 
 ```js
-*export* *default* function *Component*({list}) {
+export default function Component({list}) {
 
-  const*listRef*=*useRef*({});
+  constlistRef=useRef({});
 
-  function *onClick*() {
+  function onClick() {
     letmaxRight=0;
     letmaxId='';
     
-    *for* (const*item*of list){
-      const*ref*=*list.current*[*item.id*];
+    for (constitemof list){
+      constref=list.current[item.id];
       if(ref){
-        const*rect*=*ref.getBoundingClientRect*();
-        if(maxRight < *rect.*right){
-          maxRight = *rect.*right;
+        constrect=ref.getBoundingClientRect();
+        if(maxRight < rect.right){
+          maxRight = rect.right;
           maxId = box,id;
         }
       }
     }
-    *alert*(`제일 끝 요소는 ${maxId}`)
+    alert(`제일 끝 요소는 ${maxId}`)
   }
-  const*setInitialText*=*useCallback*(*ref*=>ref&&*setText*(*INTIAL_TEXT*),[]);
-  *return* (
+  constsetInitialText=useCallback(ref=>ref&&setText(INTIAL_TEXT),[]);
+  return (
     
     <>
       <div>
         {
-          *list.map*(item => (
+          list.map(item => (
             <div
-              *ref* = {ref=> *list.*current[*item.*id] = ref}>
+              ref = {ref=> list.current[item.id] = ref}>
               {item}
             </div>
           ))
         }
       <div>
-      <button *onClick*={onClick}>
+      <button onClick={onClick}>
     </>
   )
 }
