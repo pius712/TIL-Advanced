@@ -8,7 +8,8 @@ DOM이라는 자료구조는 일종의 인터페이스로 프로그래밍 언어
 - method
 
 ## Node
-HTML의 요소(element)는 HTML 문서를 구성하는 각 개별 요소이다. HTML 문서가 렌더링 엔진에 의해 파싱되면서 DOM 객체로 변환될 때, 이 HTML element는 노드 객체로 변환된다.
+HTML의 요소(element)는 HTML 문서를 구성하는 각 개별 요소이다. 
+HTML 문서가 렌더링 엔진에 의해 파싱되면서 DOM 객체로 변환될 때, 이 HTML element는 노드 객체로 변환된다.
 
 > elements !== nodes
 >
