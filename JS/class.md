@@ -11,7 +11,9 @@
 
 클래스를 통해 생성되는 메서드와 인스턴스 변수.
 
-객체의 메서드는 클래스의 prototype property를 통해 상속받는 메서드이다. 이것도 정확하게는 클래스의 prototype property의 메서드를 복사하는 것이 아니라, 해당 메서드의 참조값을 받아오는 것이라서 다른 클래스 지향언어와는 일치하지는 않는다.
+객체의 메서드는 클래스의 prototype property를 통해 상속받는 메서드이다. 
+이것도 정확하게는 클래스의 prototype property의 메서드를 복사하는 것이 아니라, 
+해당 메서드의 참조값을 받아오는 것이라서 다른 클래스 지향언어와는 일치하지는 않는다.
 
 인스턴스 변수는 객체가 생성될때,  해당 객체에 할당되는 것이다.
 `const p1 = new Person('pius');`를 호출하면, 아래의 시나리오를 따르게 된다.
@@ -32,7 +34,7 @@ class Person {
 
 const person = new Person('pius');
 person.sayHello();
->>> hello my name is pius
+// >>> hello my name is pius
 ```
 
 ## 클래스 원리
@@ -49,24 +51,24 @@ class Person {
 
 
 console.log(typeof Person);
->>> Function
+// >>> Function
 console.log(Object.keys(Person.prototype));
->>> []
+// >>> []
 // prototype 객체는 조회할 수 없도록 설정이 되어 있음
  
 console.log(Object.getOwnPropertyNames(Person.prototype));
->>> ["constructor", "sayHello"]
+// >>> ["constructor", "sayHello"]
 
 const person = new Person('mike');
 // person instance
 console.log(Object.keys(person));
->>> ['name']
+// >>> ['name']
 // contructor에서 만들어지는 변수들은 객체에 직접 할당이된다.
 
 console.log(Person.prototype.constructor === Person);
->>> true
+// >>> true
 console.log(Person.prototype.sayHello);
->>> [Function: sayHello]
+// >>> [Function: sayHello]
 ```
 
 ## getter / setter
@@ -90,15 +92,15 @@ class Person {
 }
 const person = new Person('pius');
 console.log(person.name);
->>> pius
+// >>> pius
 // get 호출
 
 person.name = 'ab';
->>> name is too short
+// >>> name is too short
 // set 호출
 
 console.log(person.name);
->>> pius
+// >>> pius
 ```
 
 
@@ -116,10 +118,10 @@ class Person {
 const person = new Person('pius');
 person.name = 'pius712';
 console.log(person.name);
->>> pius
+// >>> pius
 
 console.log(Object.keys(perosn));
->>> ['_name']
+// >>> ['_name']
 ```
 
 ## 상속
@@ -180,12 +182,12 @@ class Programmer extends Person {
 
 console.log(Object.getPrototypeOf(Programmer.prototype)
 						=== Person.prototype);
->>> true
+// >>> true
 console.log(Object.getPrototypeOf(Programmer) === Person);
->>> true
+// >>> true
 
 Person.prototype === Programmer.__proto__
->>> false 
+// >>> false 
 // ????????
 ```
 
@@ -214,7 +216,7 @@ class Programmer extends Person {
 }
 let p1 = new Person('pius');
 console.log(p1.__proto__ === Person.prototype);
->>> true
+// >>> true
 ```
 
 **상속의 경우 프로토타입의 관계가 다르다**
@@ -239,9 +241,9 @@ const p1 = Programmer('pius', 'js');
 
 console.log(Object.getPrototypeOf(Programmer.prototype)
 						=== Person.prototype);
->>> true
+// >>> true
 console.log(Object.getPrototypeOf(Programmer) === Person);
->>> true
+// >>> true
 
 ```
 
@@ -285,9 +287,9 @@ class Programmer extends Person {
 
 const p1 = new Programmer('pius', 'js');
 p1.sayHello();
->>> hello pius
->>> my language is js
->>> Your number is 25
+// >>> hello pius
+// >>> my language is js
+// >>> Your number is 25
 ```
 
 
@@ -312,10 +314,10 @@ class Person {
 }
 
 console.log(Person.prototype.age, Person.prototype.printName);
->>> undefined undefined
+// >>> undefined undefined
 
 console.log(Person.prototype.printHello);
->>> f printHello() { //...생략  }
+// >>> f printHello() { //...생략  }
 
 
 const person1 = new Person('pius');
@@ -340,15 +342,15 @@ class Person {
 }
 const person1 = new Person('pius');
 setTimeout(person1.printName1, 100);
->>> undefined
+// >>> undefined
 
 setTimeout(person1.printName2, 100);
->>> pius
+// >>> pius
 ```
 
 `setTimeout(person1.printName1, 100);`의 결과가 undefined인 이유는 무엇일까? 분명 함수호출 당시에 객체가 바인딩 되어있는데?
 
->>> 함수 호출 당시 (X)
+// >>> 함수 호출 당시 (X)
 setTimeout의 `첫번째 인자는 호출이 아니라 함수 레퍼런스를 넘겨준것이다.` 함수의 레퍼런스를 넘겨준거고, 이후 setTimeout에 의해 호출되기 때문에, 그 호출 당시에는 바인딩이 없다. 따라서 this가 적용이 안된다.
 
 ### super / this
@@ -406,7 +408,7 @@ p1.sayHello();
 // error
 
 p1.print();
->>> pius
+// >>> pius
 
 ```
 
@@ -433,9 +435,9 @@ const p1 = new Person('pius', 29);
 const p2 = new Person('bius', 39);
 const younger = Person.getYounger(p1, p2);
 console.log(younger.name);
->>> pius
+// >>> pius
 console.log(Person.CURRENT_ID);
->>> 3
+// >>> 3
 ```
 
 정적 멤버 변수, 정적 메서드 또한 상속이 가능하다.

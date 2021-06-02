@@ -364,7 +364,7 @@ function foo(a){
   this.a = a;
 }
 var bar = new foo('hello world');
-console.log(this.a);
+console.log(bar.a);
 >>> hello world
 ```
 
